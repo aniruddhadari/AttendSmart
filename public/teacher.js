@@ -27,6 +27,8 @@ const insightsEl = document.getElementById("sessionInsights");
 const printBtn = document.getElementById("printBtn");
 const exportBtn = document.getElementById("exportBtn");
 
+
+
 /* =========================
    STATE
 ========================= */
@@ -175,6 +177,25 @@ function listenForAttendance(sessionId) {
     insightsEl.innerText = insightText;
   });
 }
+const tr = document.createElement("tr");
+
+tr.innerHTML = `
+  <td>${data.name}</td>
+  <td>${data.department}</td>
+  <td>${data.roll}</td>
+  <td>${time}</td>
+  <td>${data.distance ?? "—"}</td>
+  <td>
+    ${
+      data.location
+        ? `<a href="https://www.google.com/maps?q=${data.location.lat},${data.location.lng}"
+             target="_blank">View</a>`
+        : "—"
+    }
+  </td>
+`;
+
+attendanceList.appendChild(tr);
 
 /* =========================
    PRINT (PDF)
@@ -199,12 +220,7 @@ exportBtn.addEventListener("click", () => {
     const parts = li.textContent.split(" | ");
     const rollTime = parts[2].split(" — ");
 
-    rows.push([
-      parts[0],
-      parts[1],
-      rollTime[0],
-      rollTime[1],
-    ]);
+    rows.push([parts[0], parts[1], rollTime[0], rollTime[1]]);
   });
 
   let csvContent = "data:text/csv;charset=utf-8,";
