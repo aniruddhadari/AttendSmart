@@ -1,0 +1,143 @@
+/* ===== GLOBAL ===== */
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f4f6f8;
+  margin: 0;
+  padding: 20px;
+  color: #333;
+}
+
+h2, h3 {
+  margin-top: 0;
+}
+
+/* ===== CONTAINER ===== */
+.container {
+  max-width: 900px;
+  margin: auto;
+}
+
+/* ===== CARD ===== */
+.card {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+/* ===== BUTTONS ===== */
+button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #2563eb;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+button:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+/* ===== QR CODE ===== */
+#qrCode {
+  margin-top: 15px;
+  text-align: -webkit-center;
+}
+
+/* ===== ATTENDANCE LIST ===== */
+#attendanceList {
+  list-style: none;
+  padding: 0;
+}
+
+#attendanceList li {
+  padding: 8px 12px;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 14px;
+}
+
+/* ===== ANALYTICS ===== */
+.analytics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 15px;
+}
+
+.stat {
+  background: #f9fafb;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.stat strong {
+  font-size: 22px;
+  display: block;
+  margin-top: 5px;
+}
+
+/* ===== INSIGHTS ===== */
+#sessionInsights {
+  margin-top: 10px;
+  padding: 12px;
+  border-left: 5px solid #2563eb;
+  background: #eef2ff;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+/* ===== INPUTS ===== */
+input {
+  width: 97%;
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+}
+
+input:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+/* ===== STATUS MESSAGE ===== */
+#statusMsg {
+  margin-top: 15px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* ===== ATTENDANCE ACTIONS ===== */
+.attendance-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+/* ===== PRINT MODE ===== */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .print-area, .print-area * {
+    visibility: visible;
+  }
+
+  .print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+}
+

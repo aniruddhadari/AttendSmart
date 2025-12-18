@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Teacher Dashboard</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="style.css" />
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="card">
+            <h2>Teacher Dashboard</h2>
+            <button id="startSession">Start Session</button>
+            <button id="endSession">End Session</button>
+            <div id="sessionInfo"></div>
+            <div id="qrCode">
+                <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+            </div>
+        </div>
+
+        <div class="card print-area">
+            <h3>Live Attendance</h3>
+
+            <ul id="attendanceList"></ul>
+
+            <!-- Action buttons -->
+            <div class="attendance-actions">
+                <button id="printBtn">Print / Save PDF</button>
+                <button id="exportBtn">Download Excel</button>
+            </div>
+        </div>
+
+
+        <div class="card">
+            <h3>Attendance Analytics</h3>
+
+            <div class="analytics">
+                <div class="stat">
+                    Total Students
+                    <strong id="totalCount">0</strong>
+                </div>
+
+                <div class="stat">
+                    Attendance %
+                    <strong id="attendancePercent">0%</strong>
+                </div>
+
+                <div class="stat">
+                    Late Arrivals
+                    <strong id="lateCount">0</strong>
+                </div>
+            </div>
+
+            <h3>Insights</h3>
+            <p id="sessionInsights"></p>
+        </div>
+
+    </div>
+
+    <!-- <button id="generateInsights">Generate AI Insights</button> -->
+
+    <div id="aiInsights" style="margin-top:15px; white-space:pre-wrap;"></div>
+
+
+
+
+
+    <script type="module" src="teacher.js"></script>
+</body>
+
+</html>
