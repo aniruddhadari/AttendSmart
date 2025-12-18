@@ -1,3 +1,6 @@
+## 🌐 Live Demo
+https://attendsmart-fee27.web.app
+
 # 📋 AttendSmart
 
 **Smart Student Attendance System using Firebase**
