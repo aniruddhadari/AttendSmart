@@ -1,6 +1,7 @@
 ## 🌐 Live Demo
 https://attendsmart-fee27.web.app
 
+HEAD
 ## 📸 Screenshots
 
 ### 🔐 Login Page
@@ -12,7 +13,7 @@ https://attendsmart-fee27.web.app
 ### 📷 Teacher Dashboard
 ![Teacher Page](screenshots/teacher-dashboard-page.png)
 
-
+---
 
 # 📋 AttendSmart
 
