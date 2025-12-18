@@ -1,3 +1,19 @@
+## 🌐 Live Demo
+https://attendsmart-fee27.web.app
+
+## 📸 Screenshots
+
+### 🔐 Login Page
+![Login Page](screenshots/login-page.png)
+
+### 🧑‍🎓 Student Dashboard
+![Student Dashboard](screenshots/student-attendance-page.png)
+
+### 📷 Teacher Dashboard
+![Teacher Page](screenshots/teacher-dashboard-page.png)
+
+
+
 # 📋 AttendSmart
 
 **Smart Student Attendance System using Firebase**
