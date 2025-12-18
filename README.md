@@ -83,13 +83,41 @@ AttendSmart provides:
 
 ```
 AttendSmart/
-│── public/
-│── server/
-│── firebase.json
-│── .firebaserc
-│── .gitignore
-│── login.js
-│── 404.html
+├── .firebase/
+│ ├── hosting.cache
+│ └── hosting.*.cache
+│
+├── public/
+│ ├── auth.js
+│ ├── firebase.js
+│ ├── index.html
+│ ├── login.html
+│ ├── student-home.html
+│ ├── student.html
+│ ├── student.js
+│ ├── teacher.html
+│ ├── teacher.js
+│ └── style.css
+│
+├── screenshots/
+│ ├── login.png
+│ ├── student-home.png
+│ └── camera.png
+│
+├── server/
+│ ├── index.js
+│ ├── node-index.js
+│ ├── package.json
+│ ├── package-lock.json
+│ ├── .env
+│ └── node_modules/
+│
+├── .firebaserc
+├── .gitignore
+├── firebase.json
+├── 404.html
+├── login.js
+└── README.md
 ```
 
 ---
