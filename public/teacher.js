@@ -17,6 +17,7 @@ const startBtn = document.getElementById("startSession");
 const endBtn = document.getElementById("endSession");
 const sessionInfo = document.getElementById("sessionInfo");
 const qrDiv = document.getElementById("qrCode");
+
 const attendanceList = document.getElementById("attendanceList");
 
 const totalCountEl = document.getElementById("totalCount");
@@ -27,8 +28,6 @@ const insightsEl = document.getElementById("sessionInsights");
 const printBtn = document.getElementById("printBtn");
 const exportBtn = document.getElementById("exportBtn");
 
-
-
 /* =========================
    STATE
 ========================= */
@@ -37,7 +36,7 @@ let unsubscribeAttendance = null;
 let sessionStartTime = null;
 
 /* =========================
-   INITIAL UI STATE
+   INITIAL STATE
 ========================= */
 endBtn.disabled = true;
 printBtn.style.display = "none";
@@ -55,43 +54,34 @@ function getSessionDateString() {
    START SESSION
 ========================= */
 startBtn.addEventListener("click", async () => {
-  try {
-    const user = auth.currentUser;
-    if (!user) return alert("Not logged in");
+  const user = auth.currentUser;
+  if (!user) return alert("Not logged in");
 
-    const sessionRef = await addDoc(collection(db, "sessions"), {
-      teacherId: user.uid,
-      active: true,
-      createdAt: serverTimestamp(),
-    });
+  const sessionRef = await addDoc(collection(db, "sessions"), {
+    teacherId: user.uid,
+    active: true,
+    createdAt: serverTimestamp(),
+  });
 
-    currentSessionId = sessionRef.id;
-    sessionStartTime = new Date();
+  currentSessionId = sessionRef.id;
+  sessionStartTime = new Date();
 
-    sessionInfo.innerHTML = `
-      <p><b>Session Created!</b></p>
-      <p>Session ID: <code>${currentSessionId}</code></p>
-    `;
+  sessionInfo.innerHTML = `
+    <p><b>Session Created!</b></p>
+    <p>Session ID: <code>${currentSessionId}</code></p>
+  `;
 
-    qrDiv.innerHTML = "";
-    const sessionUrl = `https://attendsmart-fee27.web.app/student.html?sessionId=${currentSessionId}`;
+  qrDiv.innerHTML = "";
+  const sessionUrl =
+    `https://attendsmart-fee27.web.app/student.html?sessionId=${currentSessionId}`;
 
-    new QRCode(qrDiv, { text: sessionUrl, width: 200, height: 200 });
+  new QRCode(qrDiv, { text: sessionUrl, width: 200, height: 200 });
 
-    endBtn.disabled = false;
-    printBtn.style.display = "none";
-    exportBtn.style.display = "none";
+  endBtn.disabled = false;
+  printBtn.style.display = "none";
+  exportBtn.style.display = "none";
 
-    totalCountEl.innerText = "";
-    attendancePercentEl.innerText = "";
-    lateCountEl.innerText = "";
-    insightsEl.innerText = "";
-
-    listenForAttendance(currentSessionId);
-  } catch (err) {
-    console.error(err);
-    alert("Failed to start session");
-  }
+  listenForAttendance(currentSessionId);
 });
 
 /* =========================
@@ -100,60 +90,73 @@ startBtn.addEventListener("click", async () => {
 endBtn.addEventListener("click", async () => {
   if (!currentSessionId) return;
 
-  try {
-    await updateDoc(doc(db, "sessions", currentSessionId), {
-      active: false,
-    });
+  await updateDoc(doc(db, "sessions", currentSessionId), {
+    active: false,
+  });
 
-    sessionInfo.innerHTML += `<p><b>Session Ended</b></p>`;
-    qrDiv.innerHTML = "";
-    endBtn.disabled = true;
+  sessionInfo.innerHTML += `<p><b>Session Ended</b></p>`;
+  endBtn.disabled = true;
 
-    printBtn.style.display = "inline-block";
-    exportBtn.style.display = "inline-block";
+  printBtn.style.display = "inline-block";
+  exportBtn.style.display = "inline-block";
 
-    if (unsubscribeAttendance) unsubscribeAttendance();
-  } catch (err) {
-    console.error(err);
-    alert("Failed to end session");
-  }
+  if (unsubscribeAttendance) unsubscribeAttendance();
 });
 
 /* =========================
-   LIVE ATTENDANCE + ANALYTICS
+   LIVE ATTENDANCE
 ========================= */
 function listenForAttendance(sessionId) {
-  const attendanceQuery = query(
+  const q = query(
     collection(db, "sessions", sessionId, "attendance"),
     orderBy("timestamp", "asc")
   );
 
-  unsubscribeAttendance = onSnapshot(attendanceQuery, (snapshot) => {
+  unsubscribeAttendance = onSnapshot(q, (snapshot) => {
     attendanceList.innerHTML = "";
 
     let total = 0;
     let late = 0;
 
-    snapshot.forEach((doc) => {
+    snapshot.forEach((docSnap) => {
       total++;
-      const data = doc.data();
+      const data = docSnap.data();
+
       const joinTime = data.timestamp?.toDate();
-
-      const minutesLate =
-        joinTime && sessionStartTime
-          ? (joinTime - sessionStartTime) / (1000 * 60)
-          : 0;
-
-      if (minutesLate > 5) late++;
-
       const time = joinTime ? joinTime.toLocaleTimeString() : "—";
 
-      const li = document.createElement("li");
-      li.textContent = `${data.name} | ${data.department} | ${data.roll} — ${time}`;
-      attendanceList.appendChild(li);
+      if (
+        joinTime &&
+        sessionStartTime &&
+        (joinTime - sessionStartTime) / 60000 > 5
+      ) {
+        late++;
+      }
+
+      const mapLink = data.location
+        ? `https://www.google.com/maps?q=${data.location.lat},${data.location.lng}`
+        : null;
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${data.name}</td>
+        <td>${data.department}</td>
+        <td>${data.roll}</td>
+        <td>${time}</td>
+        <td>${data.distance ?? "—"}</td>
+        <td>
+          ${
+            mapLink
+              ? `<a href="${mapLink}" target="_blank">View</a>`
+              : "—"
+          }
+        </td>
+      `;
+
+      attendanceList.appendChild(tr);
     });
 
-    /* ===== ANALYTICS ===== */
+    /* ANALYTICS */
     const CLASS_SIZE = 30;
 
     totalCountEl.innerText = total;
@@ -162,43 +165,19 @@ function listenForAttendance(sessionId) {
     const percent = Math.round((total / CLASS_SIZE) * 100);
     attendancePercentEl.innerText = `${percent}%`;
 
-    let insightText = "";
-    if (total === 0) {
-      insightText = "No students attended this session.";
-    } else if (percent < 40) {
-      insightText = "⚠️ Very low attendance. Possible engagement issue.";
-    } else if (percent < 70) {
-      insightText = "⚠️ Moderate attendance.";
-    } else {
-      insightText = "✅ High attendance. Good participation.";
-    }
-
-    if (late > 0) insightText += ` ${late} student(s) joined late.`;
-    insightsEl.innerText = insightText;
+    insightsEl.innerText =
+      total === 0
+        ? "No students attended this session."
+        : percent < 40
+        ? "⚠️ Very low attendance."
+        : percent < 70
+        ? "⚠️ Moderate attendance."
+        : "✅ High attendance.";
   });
 }
-const tr = document.createElement("tr");
-
-tr.innerHTML = `
-  <td>${data.name}</td>
-  <td>${data.department}</td>
-  <td>${data.roll}</td>
-  <td>${time}</td>
-  <td>${data.distance ?? "—"}</td>
-  <td>
-    ${
-      data.location
-        ? `<a href="https://www.google.com/maps?q=${data.location.lat},${data.location.lng}"
-             target="_blank">View</a>`
-        : "—"
-    }
-  </td>
-`;
-
-attendanceList.appendChild(tr);
 
 /* =========================
-   PRINT (PDF)
+   PRINT
 ========================= */
 printBtn.addEventListener("click", () => {
   document.title = `Attendance_${getSessionDateString()}`;
@@ -206,30 +185,18 @@ printBtn.addEventListener("click", () => {
 });
 
 /* =========================
-   EXPORT CSV (EXCEL)
+   EXPORT CSV
 ========================= */
 exportBtn.addEventListener("click", () => {
-  const rows = [];
+  let csv = "Name,Department,Roll,Time,Distance\n";
 
-  rows.push(["Session Date", getSessionDateString()]);
-  rows.push(["Total Students Present", attendanceList.children.length]);
-  rows.push([]);
-  rows.push(["Name", "Department", "Roll", "Time"]);
-
-  document.querySelectorAll("#attendanceList li").forEach((li) => {
-    const parts = li.textContent.split(" | ");
-    const rollTime = parts[2].split(" — ");
-
-    rows.push([parts[0], parts[1], rollTime[0], rollTime[1]]);
-  });
-
-  let csvContent = "data:text/csv;charset=utf-8,";
-  rows.forEach((row) => {
-    csvContent += row.join(",") + "\n";
+  document.querySelectorAll("#attendanceList tr").forEach((tr) => {
+    const cells = [...tr.children].map((td) => td.innerText.replace(",", " "));
+    csv += cells.join(",") + "\n";
   });
 
   const link = document.createElement("a");
-  link.href = encodeURI(csvContent);
+  link.href = encodeURI("data:text/csv;charset=utf-8," + csv);
   link.download = `attendance_${getSessionDateString()}.csv`;
   document.body.appendChild(link);
   link.click();

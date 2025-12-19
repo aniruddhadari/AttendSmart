@@ -25,14 +25,29 @@
         <div class="card print-area">
             <h3>Live Attendance</h3>
 
-            <ul id="attendanceList"></ul>
+            <div class="table-wrapper">
+                <table class="attendance-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Department</th>
+                            <th>Roll</th>
+                            <th>Time</th>
+                            <th>Distance (m)</th>
+                            <th>Map</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendanceList"></tbody>
+                </table>
+            </div>
 
-            <!-- Action buttons -->
             <div class="attendance-actions">
                 <button id="printBtn">Print / Save PDF</button>
                 <button id="exportBtn">Download Excel</button>
             </div>
         </div>
+
+
 
 
         <div class="card">

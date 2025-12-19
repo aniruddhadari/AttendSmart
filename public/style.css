@@ -141,3 +141,41 @@ input:focus {
   }
 }
 
+/* ===== ATTENDANCE TABLE ===== */
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.attendance-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.attendance-table th,
+.attendance-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.attendance-table th {
+  background: #f3f4f6;
+  font-weight: 600;
+}
+
+.attendance-table tr:hover {
+  background: #f9fafb;
+}
+
+.attendance-table a {
+  color: #2563eb;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.attendance-table a:hover {
+  text-decoration: underline;
+}
