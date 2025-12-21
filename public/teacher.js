@@ -11,13 +11,21 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 /* =========================
-   DOM ELEMENTS
+   CONSTANTS & STATE
+========================= */
+const CLASS_SIZE = 30;
+let attendanceChart = null;
+let currentSessionId = null;
+let unsubscribeAttendance = null;
+let sessionStartTime = null;
+
+/* =========================
+   DOM
 ========================= */
 const startBtn = document.getElementById("startSession");
 const endBtn = document.getElementById("endSession");
 const sessionInfo = document.getElementById("sessionInfo");
 const qrDiv = document.getElementById("qrCode");
-
 const attendanceList = document.getElementById("attendanceList");
 
 const totalCountEl = document.getElementById("totalCount");
@@ -29,25 +37,92 @@ const printBtn = document.getElementById("printBtn");
 const exportBtn = document.getElementById("exportBtn");
 
 /* =========================
-   STATE
-========================= */
-let currentSessionId = null;
-let unsubscribeAttendance = null;
-let sessionStartTime = null;
-
-/* =========================
-   INITIAL STATE
+   INITIAL UI
 ========================= */
 endBtn.disabled = true;
 printBtn.style.display = "none";
 exportBtn.style.display = "none";
+printBtn.addEventListener("click", handlePrint);
+exportBtn.addEventListener("click", handleExport);
+
 
 /* =========================
-   HELPERS
+   Print button
 ========================= */
-function getSessionDateString() {
-  if (!sessionStartTime) return "session";
-  return sessionStartTime.toISOString().split("T")[0];
+function handlePrint() {
+  if (!attendanceList.children.length) {
+    alert("No attendance data to print");
+    return;
+  }
+
+  document.title = `Attendance_${new Date().toLocaleDateString()}`;
+  window.print();
+}
+
+/* =========================
+   Excel download
+========================= */
+function handleExport() {
+  if (!attendanceList.children.length) {
+    alert("No attendance data to export");
+    return;
+  }
+
+  let csv = "Name,Department,Roll,Time,Distance(m)\n";
+
+  document.querySelectorAll("#attendanceList tr").forEach((tr) => {
+    const cells = [...tr.children].map(td =>
+      `"${td.innerText.replace(/"/g, '""')}"`
+    );
+    csv += cells.join(",") + "\n";
+  });
+
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `attendance_${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  URL.revokeObjectURL(url);
+}
+
+
+/* =========================
+   PIE CHART
+========================= */
+function renderPieChart(present, absent, late) {
+  const canvas = document.getElementById("attendanceChart");
+  if (!canvas || typeof Chart === "undefined") {
+    console.error("❌ Chart.js not loaded");
+    return;
+  }
+
+  const ctx = canvas.getContext("2d");
+
+  if (attendanceChart) attendanceChart.destroy();
+
+  attendanceChart = new Chart(ctx, {
+    type: "pie",
+    data: {
+      labels: ["Present", "Absent", "Late"],
+      datasets: [
+        {
+          data: [present, absent, late],
+          backgroundColor: ["#22c55e", "#ef4444", "#f59e0b"],
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: "bottom" },
+      },
+    },
+  });
 }
 
 /* =========================
@@ -72,15 +147,13 @@ startBtn.addEventListener("click", async () => {
   `;
 
   qrDiv.innerHTML = "";
-  const sessionUrl =
-    `https://attendsmart-fee27.web.app/student.html?sessionId=${currentSessionId}`;
-
-  new QRCode(qrDiv, { text: sessionUrl, width: 200, height: 200 });
+  new QRCode(qrDiv, {
+    text: `https://attendsmart-fee27.web.app/student.html?sessionId=${currentSessionId}`,
+    width: 200,
+    height: 200,
+  });
 
   endBtn.disabled = false;
-  printBtn.style.display = "none";
-  exportBtn.style.display = "none";
-
   listenForAttendance(currentSessionId);
 });
 
@@ -88,18 +161,10 @@ startBtn.addEventListener("click", async () => {
    END SESSION
 ========================= */
 endBtn.addEventListener("click", async () => {
-  if (!currentSessionId) return;
-
-  await updateDoc(doc(db, "sessions", currentSessionId), {
-    active: false,
-  });
-
-  sessionInfo.innerHTML += `<p><b>Session Ended</b></p>`;
+  await updateDoc(doc(db, "sessions", currentSessionId), { active: false });
   endBtn.disabled = true;
-
   printBtn.style.display = "inline-block";
   exportBtn.style.display = "inline-block";
-
   if (unsubscribeAttendance) unsubscribeAttendance();
 });
 
@@ -121,7 +186,6 @@ function listenForAttendance(sessionId) {
     snapshot.forEach((docSnap) => {
       total++;
       const data = docSnap.data();
-
       const joinTime = data.timestamp?.toDate();
       const time = joinTime ? joinTime.toLocaleTimeString() : "—";
 
@@ -134,8 +198,8 @@ function listenForAttendance(sessionId) {
       }
 
       const mapLink = data.location
-        ? `https://www.google.com/maps?q=${data.location.lat},${data.location.lng}`
-        : null;
+        ? `<a href="https://maps.google.com/?q=${data.location.lat},${data.location.lng}" target="_blank">View</a>`
+        : "—";
 
       const tr = document.createElement("tr");
       tr.innerHTML = `
@@ -144,61 +208,27 @@ function listenForAttendance(sessionId) {
         <td>${data.roll}</td>
         <td>${time}</td>
         <td>${data.distance ?? "—"}</td>
-        <td>
-          ${
-            mapLink
-              ? `<a href="${mapLink}" target="_blank">View</a>`
-              : "—"
-          }
-        </td>
+        <td>${mapLink}</td>
       `;
-
       attendanceList.appendChild(tr);
     });
 
-    /* ANALYTICS */
-    const CLASS_SIZE = 30;
+    const absent = Math.max(CLASS_SIZE - total, 0);
+    const percent = Math.round((total / CLASS_SIZE) * 100);
 
     totalCountEl.innerText = total;
     lateCountEl.innerText = late;
-
-    const percent = Math.round((total / CLASS_SIZE) * 100);
     attendancePercentEl.innerText = `${percent}%`;
 
     insightsEl.innerText =
       total === 0
-        ? "No students attended this session."
+        ? "No students attended."
         : percent < 40
         ? "⚠️ Very low attendance."
         : percent < 70
         ? "⚠️ Moderate attendance."
         : "✅ High attendance.";
+
+    renderPieChart(total, absent, late);
   });
 }
-
-/* =========================
-   PRINT
-========================= */
-printBtn.addEventListener("click", () => {
-  document.title = `Attendance_${getSessionDateString()}`;
-  window.print();
-});
-
-/* =========================
-   EXPORT CSV
-========================= */
-exportBtn.addEventListener("click", () => {
-  let csv = "Name,Department,Roll,Time,Distance\n";
-
-  document.querySelectorAll("#attendanceList tr").forEach((tr) => {
-    const cells = [...tr.children].map((td) => td.innerText.replace(",", " "));
-    csv += cells.join(",") + "\n";
-  });
-
-  const link = document.createElement("a");
-  link.href = encodeURI("data:text/csv;charset=utf-8," + csv);
-  link.download = `attendance_${getSessionDateString()}.csv`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-});

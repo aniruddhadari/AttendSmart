@@ -1,3 +1,20 @@
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .print-area, .print-area * {
+    visibility: visible;
+  }
+
+  .print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+}
+
 /* ===== GLOBAL ===== */
 body {
   font-family: Arial, Helvetica, sans-serif;
@@ -178,4 +195,10 @@ input:focus {
 
 .attendance-table a:hover {
   text-decoration: underline;
+}
+
+#attendanceChart {
+  max-width: 400px;
+  margin: 20px auto;
+  display: block;
 }
