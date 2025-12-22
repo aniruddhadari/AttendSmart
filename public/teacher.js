@@ -42,9 +42,10 @@ const exportBtn = document.getElementById("exportBtn");
 endBtn.disabled = true;
 printBtn.style.display = "none";
 exportBtn.style.display = "none";
+sessionInfo.style.display = "none"; // 👈 hide long white bar initially
+
 printBtn.addEventListener("click", handlePrint);
 exportBtn.addEventListener("click", handleExport);
-
 
 /* =========================
    Print button
@@ -71,8 +72,8 @@ function handleExport() {
   let csv = "Name,Department,Roll,Time,Distance(m)\n";
 
   document.querySelectorAll("#attendanceList tr").forEach((tr) => {
-    const cells = [...tr.children].map(td =>
-      `"${td.innerText.replace(/"/g, '""')}"`
+    const cells = [...tr.children].map(
+      (td) => `"${td.innerText.replace(/"/g, '""')}"`
     );
     csv += cells.join(",") + "\n";
   });
@@ -82,7 +83,7 @@ function handleExport() {
 
   const link = document.createElement("a");
   link.href = url;
-  link.download = `attendance_${new Date().toISOString().slice(0,10)}.csv`;
+  link.download = `attendance_${new Date().toISOString().slice(0, 10)}.csv`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -90,16 +91,12 @@ function handleExport() {
   URL.revokeObjectURL(url);
 }
 
-
 /* =========================
    PIE CHART
 ========================= */
 function renderPieChart(present, absent, late) {
   const canvas = document.getElementById("attendanceChart");
-  if (!canvas || typeof Chart === "undefined") {
-    console.error("❌ Chart.js not loaded");
-    return;
-  }
+  if (!canvas || typeof Chart === "undefined") return;
 
   const ctx = canvas.getContext("2d");
 
@@ -117,7 +114,8 @@ function renderPieChart(present, absent, late) {
       ],
     },
     options: {
-      responsive: true,
+      responsive: false, // 👈 IMPORTANT
+      maintainAspectRatio: false,
       plugins: {
         legend: { position: "bottom" },
       },
@@ -130,7 +128,10 @@ function renderPieChart(present, absent, late) {
 ========================= */
 startBtn.addEventListener("click", async () => {
   const user = auth.currentUser;
-  if (!user) return alert("Not logged in");
+  if (!user) {
+    alert("Not logged in");
+    return;
+  }
 
   const sessionRef = await addDoc(collection(db, "sessions"), {
     teacherId: user.uid,
@@ -145,6 +146,7 @@ startBtn.addEventListener("click", async () => {
     <p><b>Session Created!</b></p>
     <p>Session ID: <code>${currentSessionId}</code></p>
   `;
+  sessionInfo.style.display = "flex"; // 👈 show now
 
   qrDiv.innerHTML = "";
   new QRCode(qrDiv, {
@@ -161,10 +163,20 @@ startBtn.addEventListener("click", async () => {
    END SESSION
 ========================= */
 endBtn.addEventListener("click", async () => {
-  await updateDoc(doc(db, "sessions", currentSessionId), { active: false });
+  if (!currentSessionId) return;
+
+  await updateDoc(doc(db, "sessions", currentSessionId), {
+    active: false,
+  });
+
   endBtn.disabled = true;
+
+  sessionInfo.style.display = "none"; // 👈 hide again
+  sessionInfo.innerHTML = "";
+
   printBtn.style.display = "inline-block";
   exportBtn.style.display = "inline-block";
+
   if (unsubscribeAttendance) unsubscribeAttendance();
 });
 

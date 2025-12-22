@@ -16,9 +16,12 @@
             <h2>Teacher Dashboard</h2>
             <button id="startSession">Start Session</button>
             <button id="endSession">End Session</button>
-            <div id="sessionInfo"></div>
-            <div id="qrCode">
-                <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+            <div id="sessionInfo">
+            </div>
+            <div class="qrWrapper">
+                <div id="qrCode">
+                    <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+                </div>
             </div>
         </div>
 
@@ -71,9 +74,9 @@
                 </div>
             </div>
 
-            <h3>Insights</h3>
+            <h3 style="margin-top:15px; color:#ffffff;">Insights</h3>
             <h3>Attendance Distribution</h3>
-            <canvas id="attendanceChart" width="300" height="300"></canvas>
+            <canvas id="attendanceChart"></canvas>
 
 
             <p id="sessionInsights"></p>

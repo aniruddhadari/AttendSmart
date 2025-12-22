@@ -3,7 +3,8 @@
     visibility: hidden;
   }
 
-  .print-area, .print-area * {
+  .print-area,
+  .print-area * {
     visibility: visible;
   }
 
@@ -12,20 +13,68 @@
     left: 0;
     top: 0;
     width: 100%;
+    background: white !important;
+    color: black !important;
+  }
+
+  /* FORCE ALL TEXT BLACK */
+  .print-area h3,
+  .print-area th,
+  .print-area td,
+  .print-area p,
+  .print-area span,
+  .print-area a {
+    color: #000 !important;
+    opacity: 1 !important;
+  }
+
+  /* TABLE HEADER */
+  .attendance-table th {
+    background: #fff !important;
+    font-weight: 700;
+  }
+
+  /* TABLE CELLS */
+  .attendance-table td {
+    border-bottom: 1px solid #000;
+  }
+
+  /* LINKS */
+  .attendance-table a {
+    text-decoration: underline;
+    color: #000 !important;
+  }
+
+  /* HIDE BUTTONS */
+  .attendance-actions {
+    display: none !important;
+  }
+
+  /* REMOVE SHADOWS */
+  .card {
+    box-shadow: none !important;
+  }
+
+  /* REMOVE CHART */
+  #attendanceChart {
+    display: none !important;
   }
 }
+
 
 /* ===== GLOBAL ===== */
 body {
   font-family: Arial, Helvetica, sans-serif;
-  background: #f4f6f8;
+  background: hsl(216, 32%, 48%);
   margin: 0;
   padding: 20px;
   color: #333;
 }
 
-h2, h3 {
+h2,
+h3 {
   margin-top: 0;
+  color: white;
 }
 
 /* ===== CONTAINER ===== */
@@ -36,11 +85,11 @@ h2, h3 {
 
 /* ===== CARD ===== */
 .card {
-  background: #ffffff;
+  background: #062446;
   padding: 20px;
   border-radius: 10px;
   margin-bottom: 20px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 10px rgba(3, 0, 0, 0.08);
 }
 
 /* ===== BUTTONS ===== */
@@ -52,6 +101,17 @@ button {
   color: white;
   font-size: 14px;
   cursor: pointer;
+}
+
+#sessionInfo {
+  background-color: white;
+  border-radius: 10px;
+  margin-top: 17px;
+  display: none;
+  /* 👈 hidden initially */
+  justify-content: center;
+  gap: 40px;
+  padding: 10px;
 }
 
 button:disabled {
@@ -67,6 +127,22 @@ button:hover:not(:disabled) {
 #qrCode {
   margin-top: 15px;
   text-align: -webkit-center;
+}
+
+/* ===== QR CODE STYLING ===== */
+#qrWrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+#qrCode canvas,
+#qrCode img {
+  border-radius: 16px;
+  border: 14px solid white;
+  /* 👈 adjust radius */
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
 }
 
 /* ===== ATTENDANCE LIST ===== */
@@ -130,6 +206,7 @@ input:focus {
   margin-top: 15px;
   font-size: 14px;
   font-weight: bold;
+  color: white;
 }
 
 /* ===== ATTENDANCE ACTIONS ===== */
@@ -146,7 +223,8 @@ input:focus {
     visibility: hidden;
   }
 
-  .print-area, .print-area * {
+  .print-area,
+  .print-area * {
     visibility: visible;
   }
 
@@ -170,35 +248,71 @@ input:focus {
   font-size: 14px;
 }
 
-.attendance-table th,
-.attendance-table td {
+/* HEADER */
+.attendance-table th {
   padding: 10px 12px;
-  border-bottom: 1px solid #e5e7eb;
+  background: white;
+  color: #000;
   text-align: center;
+  font-weight: 600;
   white-space: nowrap;
 }
 
-.attendance-table th {
-  background: #f3f4f6;
-  font-weight: 600;
+/* NORMAL ROW STATE */
+.attendance-table td {
+  padding: 10px 12px;
+  text-align: center;
+  white-space: nowrap;
+  color: white;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+/* 👇 WHITE HOVER (NO BLUE) */
 .attendance-table tr:hover {
-  background: #f9fafb;
+  background: white;
 }
 
-.attendance-table a {
-  color: #2563eb;
+/* 👇 TEXT STAYS READABLE ON WHITE */
+.attendance-table tr:hover td {
+  color: #000;
+}
+
+/* 👇 MAP LINK — NEVER BLUE */
+.attendance-table a,
+.attendance-table a:visited {
+  color: white;
   font-weight: 500;
-  text-decoration: none;
-}
-
-.attendance-table a:hover {
   text-decoration: underline;
 }
 
+/* 👇 MAP LINK ON HOVER ROW */
+.attendance-table tr:hover a {
+  color: #000;
+}
+
 #attendanceChart {
-  max-width: 400px;
-  margin: 20px auto;
+  max-width: 300px;
+  max-height: 300px;
+  margin: auto;
   display: block;
 }
+
+/* Make "Live Attendance" heading dark black
+.print-area h3 {
+  color: #000 !important;
+}
+
+/* Make table headers dark black */
+/* .attendance-table th { */
+  /* color: #000000 !important; */
+/* } */
+
+/* (Optional) Ensure table header background stays white */
+/* .attendance-table th { */
+  /* background: #ffffff !important; */
+/* } */ 
+
+.print-area th {
+  color: #000 !important;
+}
+
