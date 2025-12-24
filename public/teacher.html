@@ -9,7 +9,6 @@
 </head>
 
 <body>
-
     <div class="container">
 
         <div class="card">
@@ -23,6 +22,28 @@
                     <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
                 </div>
             </div>
+        </div>
+
+        <div class="card">
+            <h3>Attendance Analytics</h3>
+            <div class="analytics">
+                <div class="stat">
+                    Total Students
+                    <strong id="totalCount">0</strong>
+                </div>
+                <div class="stat">
+                    Attendance %
+                    <strong id="attendancePercent">0%</strong>
+                </div>
+                <div class="stat">
+                    Late Arrivals
+                    <strong id="lateCount">0</strong>
+                </div>
+            </div>
+            <h3 style="margin-top:15px; color:#ffffff;">Insights</h3>
+            <h3>Attendance Distribution</h3>
+            <canvas id="attendanceChart"></canvas>
+            <p id="sessionInsights"></p>
         </div>
 
         <div class="card print-area">
@@ -50,49 +71,10 @@
             </div>
         </div>
 
-
-
-
-        <div class="card">
-            <h3>Attendance Analytics</h3>
-
-
-            <div class="analytics">
-                <div class="stat">
-                    Total Students
-                    <strong id="totalCount">0</strong>
-                </div>
-
-                <div class="stat">
-                    Attendance %
-                    <strong id="attendancePercent">0%</strong>
-                </div>
-
-                <div class="stat">
-                    Late Arrivals
-                    <strong id="lateCount">0</strong>
-                </div>
-            </div>
-
-            <h3 style="margin-top:15px; color:#ffffff;">Insights</h3>
-            <h3>Attendance Distribution</h3>
-            <canvas id="attendanceChart"></canvas>
-
-
-            <p id="sessionInsights"></p>
-
-        </div>
-
     </div>
-
+    </div>
     <!-- <button id="generateInsights">Generate AI Insights</button> -->
-
     <div id="aiInsights" style="margin-top:15px; white-space:pre-wrap;"></div>
-
-
-
-
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="module" src="teacher.js"></script>
 </body>
