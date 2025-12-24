@@ -108,7 +108,7 @@ button {
   border-radius: 10px;
   margin-top: 17px;
   display: none;
-  /* 👈 hidden initially */
+  /* hidden initially */
   justify-content: center;
   gap: 40px;
   padding: 10px;
@@ -267,17 +267,17 @@ input:focus {
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* 👇 WHITE HOVER (NO BLUE) */
+/* WHITE HOVER (NO BLUE) */
 .attendance-table tr:hover {
   background: white;
 }
 
-/* 👇 TEXT STAYS READABLE ON WHITE */
+/* TEXT STAYS READABLE ON WHITE */
 .attendance-table tr:hover td {
   color: #000;
 }
 
-/* 👇 MAP LINK — NEVER BLUE */
+/* MAP LINK — NEVER BLUE */
 .attendance-table a,
 .attendance-table a:visited {
   color: white;
@@ -285,7 +285,7 @@ input:focus {
   text-decoration: underline;
 }
 
-/* 👇 MAP LINK ON HOVER ROW */
+/* MAP LINK ON HOVER ROW */
 .attendance-table tr:hover a {
   color: #000;
 }

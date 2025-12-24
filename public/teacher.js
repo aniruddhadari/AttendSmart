@@ -42,7 +42,7 @@ const exportBtn = document.getElementById("exportBtn");
 endBtn.disabled = true;
 printBtn.style.display = "none";
 exportBtn.style.display = "none";
-sessionInfo.style.display = "none"; // 👈 hide long white bar initially
+sessionInfo.style.display = "none"; // hide long white bar initially
 
 printBtn.addEventListener("click", handlePrint);
 exportBtn.addEventListener("click", handleExport);
@@ -114,7 +114,7 @@ function renderPieChart(present, absent, late) {
       ],
     },
     options: {
-      responsive: false, // 👈 IMPORTANT
+      responsive: false, // IMPORTANT
       maintainAspectRatio: false,
       plugins: {
         legend: { position: "bottom" },
@@ -146,7 +146,7 @@ startBtn.addEventListener("click", async () => {
     <p><b>Session Created!</b></p>
     <p>Session ID: <code>${currentSessionId}</code></p>
   `;
-  sessionInfo.style.display = "flex"; // 👈 show now
+  sessionInfo.style.display = "flex"; // show now
 
   qrDiv.innerHTML = "";
   new QRCode(qrDiv, {
@@ -171,7 +171,7 @@ endBtn.addEventListener("click", async () => {
 
   endBtn.disabled = true;
 
-  sessionInfo.style.display = "none"; // 👈 hide again
+  sessionInfo.style.display = "none"; // hide again
   sessionInfo.innerHTML = "";
 
   printBtn.style.display = "inline-block";
