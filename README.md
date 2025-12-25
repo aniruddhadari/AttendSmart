@@ -1,6 +1,16 @@
 ## 🌐 Live Demo
 https://attendsmart-fee27.web.app
 
+TO ACCESS 
+
+##LOGIN IN AS TEACHER 
+EMAIL- test@college.com
+PASSWORD - 123456
+
+##LOGIN IN AS STUDENT 
+EMAIL- student@college.com
+PASSWORD - 123456
+
 HEAD
 ## 📸 Screenshots
 
